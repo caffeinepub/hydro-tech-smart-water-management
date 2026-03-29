@@ -216,6 +216,7 @@ const SHOP_PRODUCTS = [
     price: 29,
     category: "Filtration",
     desc: "3-stage activated carbon filter, 6-month lifespan",
+    img: "/assets/generated/shop-water-filter.dim_400x300.png",
   },
   {
     id: 2,
@@ -223,6 +224,7 @@ const SHOP_PRODUCTS = [
     price: 89,
     category: "Sensors",
     desc: "Bluetooth-enabled, ±0.01 pH accuracy",
+    img: "/assets/generated/shop-ph-sensor.dim_400x300.png",
   },
   {
     id: 3,
@@ -230,6 +232,7 @@ const SHOP_PRODUCTS = [
     price: 65,
     category: "Monitoring",
     desc: "Digital display, 0.3–10 L/min range",
+    img: "/assets/generated/shop-flow-meter.dim_400x300.png",
   },
   {
     id: 4,
@@ -237,6 +240,7 @@ const SHOP_PRODUCTS = [
     price: 45,
     category: "Monitoring",
     desc: "Stainless steel, 0–10 bar range",
+    img: "/assets/generated/shop-pressure-gauge.dim_400x300.png",
   },
   {
     id: 5,
@@ -244,6 +248,7 @@ const SHOP_PRODUCTS = [
     price: 149,
     category: "Purification",
     desc: "Kills 99.99% of pathogens, 12W UV lamp",
+    img: "/assets/generated/shop-uv-purifier.dim_400x300.png",
   },
   {
     id: 6,
@@ -251,6 +256,7 @@ const SHOP_PRODUCTS = [
     price: 199,
     category: "Automation",
     desc: "Wi-Fi, programmable schedules, leak detection",
+    img: "/assets/generated/shop-valve-controller.dim_400x300.png",
   },
 ];
 
@@ -410,15 +416,11 @@ function LoginPage({
   const [webId, setWebId] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (demo = false) => {
+  const handleLogin = async () => {
     setLoading(true);
     await new Promise((r) => setTimeout(r, 600));
     setLoading(false);
-    onLogin(
-      demo ? "hydro-demo" : webId || "user-1",
-      demo ? "Demo User" : "Admin",
-      demo ? "demo@hydrotech.io" : email,
-    );
+    onLogin(webId || "user-1", "Admin", email);
     toast.success("Welcome to Hydro-Tech!");
   };
 
@@ -475,20 +477,143 @@ function LoginPage({
             data-ocid="login.submit_button"
             className="w-full"
             style={{ background: "#0F7F84" }}
-            onClick={() => handleLogin(false)}
+            onClick={() => handleLogin()}
             disabled={loading}
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
             {loading ? "Signing in..." : "Sign In"}
           </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── ProfileSetupPage ─────────────────────────────────────────────────────────
+function ProfileSetupPage({
+  onComplete,
+  onLogout,
+}: {
+  onComplete: (data: {
+    name: string;
+    phone: string;
+    location: string;
+    organization: string;
+  }) => void;
+  onLogout: () => void;
+}) {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [location, setLocation] = useState("");
+  const [organization, setOrganization] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSubmit = () => {
+    if (
+      !name.trim() ||
+      !phone.trim() ||
+      !location.trim() ||
+      !organization.trim()
+    ) {
+      setError(
+        "All fields are required. Please fill in your details to continue.",
+      );
+      return;
+    }
+    setError("");
+    onComplete({ name, phone, location, organization });
+    toast.success("Profile saved! Welcome to Hydro-Tech.");
+  };
+
+  return (
+    <div
+      className="min-h-screen flex items-center justify-center px-4"
+      style={{
+        background:
+          "linear-gradient(135deg, #0B3F4A 0%, #0F7F84 60%, #22B8A6 100%)",
+      }}
+    >
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+        <div className="flex flex-col items-center mb-8">
+          <img
+            src="/assets/uploads/chatgpt_image_mar_28_2026_07_53_09_pm-019d38d4-c150-7469-ab36-5a279995318e-1.png"
+            alt="Hydro-Tech Logo"
+            className="w-16 h-16 rounded-xl object-cover mb-3"
+          />
+          <h1 className="text-2xl font-bold text-[#0B3F4A]">
+            Complete Your Profile
+          </h1>
+          <p className="text-slate-500 text-sm">
+            Fill in your details to continue
+          </p>
+        </div>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="profile-name">Full Name</Label>
+            <Input
+              id="profile-name"
+              data-ocid="profile_setup.input"
+              placeholder="John Doe"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+          <div>
+            <Label htmlFor="profile-phone">Phone Number</Label>
+            <Input
+              id="profile-phone"
+              data-ocid="profile_setup.phone_input"
+              placeholder="+1 234 567 8900"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+          </div>
+          <div>
+            <Label htmlFor="profile-location">Location</Label>
+            <Input
+              id="profile-location"
+              data-ocid="profile_setup.location_input"
+              placeholder="City, Country"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+            />
+          </div>
+          <div>
+            <Label htmlFor="profile-org">Organization</Label>
+            <Input
+              id="profile-org"
+              data-ocid="profile_setup.org_input"
+              placeholder="Your company or organization"
+              value={organization}
+              onChange={(e) => setOrganization(e.target.value)}
+            />
+          </div>
+          {error && (
+            <p
+              data-ocid="profile_setup.error_state"
+              className="text-sm text-red-500 text-center"
+            >
+              {error}
+            </p>
+          )}
           <Button
-            data-ocid="login.secondary_button"
-            variant="outline"
+            data-ocid="profile_setup.submit_button"
             className="w-full"
-            onClick={() => handleLogin(true)}
+            style={{ background: "#0F7F84" }}
+            onClick={handleSubmit}
           >
-            Continue as Demo
+            Continue
           </Button>
+          <div className="text-center">
+            <button
+              type="button"
+              data-ocid="profile_setup.cancel_button"
+              onClick={onLogout}
+              className="text-slate-400 text-sm hover:text-[#0F7F84] underline"
+            >
+              Logout
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -1568,8 +1693,12 @@ function Shop() {
             data-ocid={`shop.item.${i + 1}`}
           >
             <CardContent className="p-4">
-              <div className="w-full h-28 rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-4xl mb-3">
-                {["🔵", "🟢", "🔷", "⚪", "💜", "🟡"][i]}
+              <div className="w-full h-36 rounded-lg overflow-hidden bg-slate-100 mb-3">
+                <img
+                  src={p.img}
+                  alt={p.name}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <Badge variant="outline" className="text-xs mb-2">
                 {p.category}
@@ -2197,6 +2326,9 @@ function BottomNav({
 // ─── App ──────────────────────────────────────────────────────────────────────
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(false);
+  const [profileComplete, setProfileComplete] = useState(
+    () => !!localStorage.getItem("hydroProfileComplete"),
+  );
   const [user, setUser] = useState({
     name: "Admin",
     email: "admin@hydrotech.io",
@@ -2215,10 +2347,33 @@ export default function App() {
     setPage("dashboard");
   };
 
+  const handleProfileComplete = (data: {
+    name: string;
+    phone: string;
+    location: string;
+    organization: string;
+  }) => {
+    setUser((prev) => ({ ...prev, name: data.name }));
+    localStorage.setItem("hydroProfileComplete", "true");
+    setProfileComplete(true);
+  };
+
   if (!loggedIn) {
     return (
       <>
         <LoginPage onLogin={handleLogin} />
+        <Toaster />
+      </>
+    );
+  }
+
+  if (!profileComplete) {
+    return (
+      <>
+        <ProfileSetupPage
+          onComplete={handleProfileComplete}
+          onLogout={handleLogout}
+        />
         <Toaster />
       </>
     );
